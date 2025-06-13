@@ -1,0 +1,58 @@
+stream_over_http_enabled: true
+server:
+  http_listen_port: 3200
+  log_level: info
+
+distributor:
+  receivers:
+    otlp:
+      protocols:
+        grpc:
+          endpoint: "0.0.0.0:5317"
+
+metrics_generator:
+  registry:
+    external_labels:
+      source: tempo
+  storage:
+    path: /var/tempo/generator/wal
+    remote_write:
+      - url: https://aps-workspaces.ap-northeast-1.amazonaws.com/workspaces/ws-e6b14789-a6b2-4f60-b7dd-b11cafdaf5ad/api/v1/remote_write
+        send_exemplars: true
+        sigv4:
+          region: ap-northeast-1
+          access_key: dummy
+          secret_key: dummy
+          
+#   traces_storage:
+#     path: /var/tempo/generator/traces
+
+# storage:
+#   trace:
+#     backend: local                     # backend configuration to use
+#     wal:
+#       path: /var/tempo/wal             # where to store the wal locally
+#     local:
+#       path: /var/tempo/blocks
+ingester:
+  trace_idle_period: 5s        # トレースが idle になってからこの秒数後に保存
+  max_block_duration: 1m        # 最長保持時間（それまでに保存される）
+
+storage:
+  trace:
+    backend: s3
+    s3:
+      bucket: ob-tempo-s3
+      endpoint: s3.ap-northeast-1.amazonaws.com
+      region: ap-northeast-1
+      prefix: ob-tempo-
+      access_key: dummy
+      secret_key: dummy
+      insecure: false
+
+overrides:
+  defaults:
+    metrics_generator:
+      processors: [service-graphs, span-metrics] # enables metrics generator
+      # processors: [service-graphs, span-metrics, local-blocks] # enables metrics generator
+      generate_native_histograms: never
