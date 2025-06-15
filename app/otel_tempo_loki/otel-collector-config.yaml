@@ -6,6 +6,11 @@ receivers:
       http:
         endpoint: 0.0.0.0:4318
 
+extensions:
+  sigv4auth:
+    region: "ap-northeast-1"
+    service: "aps"
+
 exporters:
   otlp/tempo:
     endpoint: "localhost:5317"

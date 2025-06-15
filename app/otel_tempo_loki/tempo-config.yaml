@@ -27,6 +27,9 @@ ingester:
   trace_idle_period: 5s        # トレースが idle になってからこの秒数後に保存
   max_block_duration: 1m        # 最長保持時間（それまでに保存される）
   flush_all_on_shutdown: true
+  lifecycler:
+      ring:
+          replication_factor: 1
 
 storage:
   trace:
@@ -46,3 +49,4 @@ overrides:
       processors: [service-graphs, span-metrics] # enables metrics generator
       # processors: [service-graphs, span-metrics, local-blocks] # enables metrics generator
       generate_native_histograms: never
+
