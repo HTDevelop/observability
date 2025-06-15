@@ -50,6 +50,11 @@ pattern_ingester:
   metric_aggregation:
     loki_address: localhost:3100
 
+ingester:
+  chunk_encoding: snappy
+  wal:
+    flush_on_shutdown: true
+
 ruler:
   alertmanager_url: http://localhost:9093
 
