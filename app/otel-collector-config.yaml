@@ -6,36 +6,21 @@ receivers:
       http:
         endpoint: 0.0.0.0:4318
 
-extensions:
-  health_check:
-    endpoint: "0.0.0.0:13133"
-  sigv4auth:
-    region: "ap-northeast-1"
-    service: "aps"
-
 exporters:
   otlp/tempo:
-    endpoint: "localhost:5317"  # TempoのOTLP gRPCエンドポイント
+    endpoint: "localhost:5317"
     tls:
-      insecure: true  # TempoにTLSなしで送る（通常はtrue）
+      insecure: true
     sending_queue:
       enabled: true
   prometheusremotewrite:
-    # endpoint: "http://localhost:9090/api/v1/write"
-    endpoint: "https://aps-workspaces.ap-northeast-1.amazonaws.com/workspaces/ws-e6b14789-a6b2-4f60-b7dd-b11cafdaf5ad/api/v1/remote_write"
+    endpoint: "https://XXXXXXXXXXXXXX/api/v1/remote_write"
     auth:
       authenticator: sigv4auth
   debug:
     verbosity: detailed
-  # prometheus:
-  #   endpoint: "localhost:8889"
   otlphttp/loki:
     endpoint: "http://localhost:3100/otlp"
-  file:
-    path: /var/log/otel/otel-logs.json
-    rotation:
-      max_megabytes: 100
-      max_days: 7
 
 processors:
   batch:
@@ -51,21 +36,17 @@ connectors:
       enabled: true
 
 service:
-  extensions: [health_check, sigv4auth]
+  extensions: [sigv4auth]
   pipelines:
     metrics:
       receivers: [otlp, spanmetrics]
-      # receivers: [otlp]
       processors: [batch]
       exporters: [debug, prometheusremotewrite]
-      # exporters: [debug]
     traces:
       receivers: [otlp]
       processors: [batch]
       exporters: [debug, otlp/tempo, spanmetrics]
-      # exporters: [debug, otlp/tempo]
     logs:
       receivers: [otlp] 
       processors: []
       exporters: [otlphttp/loki]
-      # exporters: [debug]

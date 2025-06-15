@@ -1,3 +1,7 @@
 resource "aws_ecr_repository" "this" {
-  name = var.repository_name
+  name = var.ob_repo_name
+}
+
+resource "aws_ecr_repository" "k6" {
+  name = var.k6_repo_name
 }

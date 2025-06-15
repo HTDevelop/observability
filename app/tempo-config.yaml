@@ -1,7 +1,7 @@
 stream_over_http_enabled: true
 server:
   http_listen_port: 3200
-  log_level: info
+  log_level: error
 
 distributor:
   receivers:
@@ -23,17 +23,6 @@ metrics_generator:
           region: ap-northeast-1
           access_key: dummy
           secret_key: dummy
-          
-#   traces_storage:
-#     path: /var/tempo/generator/traces
-
-# storage:
-#   trace:
-#     backend: local                     # backend configuration to use
-#     wal:
-#       path: /var/tempo/wal             # where to store the wal locally
-#     local:
-#       path: /var/tempo/blocks
 ingester:
   trace_idle_period: 5s        # トレースが idle になってからこの秒数後に保存
   max_block_duration: 1m        # 最長保持時間（それまでに保存される）
